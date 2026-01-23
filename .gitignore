@@ -1,12 +1,13 @@
-# Environnement virtuel
-.venv/
+ Environnement virtuel
+ .venv/
 
-# Python
-__pycache__/
-*.pyc
 
-# Fichiers sensibles
-.env
+ Python
+ __pycache__/
+ *.pyc
 
-# VS Code
-.vscode/
+ Fichiers sensibles
+ .env
+
+ VS Code
+ .vscode/
