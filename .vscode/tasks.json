@@ -1,0 +1,20 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Lancer main.py (mode SDR réel)",
+			"type": "shell",
+			"command": "python main.py"
+		},
+		{
+			"label": "Lancer main.py (mode simulation)",
+			"type": "shell",
+			"command": "python main.py"
+		},
+		{
+			"label": "Lancer main.py (mode simulation après install psycopg2)",
+			"type": "shell",
+			"command": "python main.py"
+		}
+	]
+}
