@@ -1,8 +1,0 @@
-# Dépendances Python pour le projet de détection de drones
-
-# Base de données PostgreSQL
-psycopg2-binary>=2.9.0
-
-# Pour les futures implémentations avec SDR
-# numpy>=1.21.0
-# scipy>=1.7.0
