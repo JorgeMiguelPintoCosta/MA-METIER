@@ -1,0 +1,102 @@
+Installation de la base de données PostgreSQL (Docker)
+
+Ce guide explique comment lancer la base de données du projet sur un ordinateur portable avec Docker et importer le fichier SQL localisation_dronesdb.sql.
+
+
+1. Lancer le container PostgreSQL
+
+Ouvrez un terminal et exécutez une seule ligne :
+
+docker run -d --name postgres_db -p 5432:5432 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=localisation_dronesdb postgres:14.20-trixie
+
+
+Cette commande :
+
+Crée un container postgres_db
+
+Expose PostgreSQL sur le port 5432
+
+Crée l’utilisateur admin avec le mot de passe admin
+
+Crée la base localisation_dronesdb
+
+ Au premier lancement, Docker télécharge automatiquement l’image PostgreSQL.
+
+________________________________________________________________________________________________________
+
+2. Vérifier que le container fonctionne
+docker ps
+
+
+Vous devez voir :
+
+NAME → postgres_db
+
+STATUS → Up ...
+
+Si le container n’apparaît pas :
+
+docker ps -a
+
+________________________________________________________________________________________________________
+
+3. Importer le fichier SQL du projet
+
+Copiez ces deux commandes une par une :
+
+docker cp localisation_dronesdb.sql postgres_db:/localisation_dronesdb.sql
+
+docker exec -it postgres_db psql -U admin -d localisation_dronesdb -f /localisation_dronesdb.sql
+
+________________________________________________________________________________________________________
+
+4. Accéder à PostgreSQL depuis le container
+docker exec -it postgres_db psql -U admin -d localisation_dronesdb
+
+
+Prompt attendu :
+
+localisation_dronesdb=#
+
+Commandes utiles
+
+Lister les tables : \dt
+
+Voir les colonnes d’une table : \d nom_de_la_table
+
+Vérifier les données : SELECT * FROM nom_de_la_table;
+
+________________________________________________________________________________________________________
+
+5. Connexion depuis pgAdmin (optionnel)
+
+Host : localhost
+
+Port : 5432
+
+Database : localisation_dronesdb
+
+Username : admin
+
+Password : admin
+
+________________________________________________________________________________________________________
+
+6. Arrêter / relancer le container
+docker stop postgres_db
+docker start postgres_db
+
+
+ Les données sont conservées automatiquement grâce au volume Docker.
+
+________________________________________________________________________________________________________
+
+7. Problèmes fréquents
+
+failed to connect to the Docker API → Docker n’est pas lancé
+
+docker: invalid reference format → commande mal copiée (doit être sur une seule ligne)
+
+Port 5432 déjà utilisé → fermer PostgreSQL local ou changer le port :
+
+-p 5433:5432
