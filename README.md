@@ -139,6 +139,103 @@ Pour sortir du mode simulation (activé par défaut) :
 
 ## Scripts Python
 
+Un projet qui détecte et localise les drones en analysant leurs signaux radio. Le système capte les signaux 2.4 GHz à 5.8, les analyse pour identifier des drones, puis estime leur distance et sauvegarde tout ça dans une base de données PostgreSQL.
+
+## Comment ça marche
+
+Le programme tourne en boucle et fait ces étapes :
+1. Récupère des échantillons de signal RF (soit depuis un SDR réel, soit en simulation)
+2. Analyse les caractéristiques du signal (bande passante, puissance, stabilité...)
+3. Décide si c'est un drone ou pas (avec un score de confiance)
+4. Estime la distance du drone par rapport au récepteur
+5. Sauvegarde la détection dans la base de données
+
+## Structure du projet
+
+```
+detection/       : Analyse les signaux pour détecter les drones
+localization/    : Estime la position et la distance
+rf_input/        : Gère les sources de signal (simulation, TCP, fichier)
+storage/         : Connection et sauvegarde en base de données
+```
+
+## Installation
+
+Il faut Python 3.8+ et PostgreSQL installés.
+
+```bash
+# Créer un environnement virtuel
+python -m venv .venv
+
+# Activer l'environnement
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/Mac
+
+# Installer les dépendances
+pip install numpy scipy psycopg2-binary
+```
+
+### Configuration de la base de données
+
+Créer un fichier `.env` à la racine avec ces infos :
+
+```
+DB_NAME=localisation_dronesdb
+DB_USER=admin
+DB_PASSWORD=admin
+DB_HOST=localhost
+DB_PORT=5432
+```
+
+La structure SQL est dans `storage/schema.sql`. Le script crée automatiquement les tables au besoin.
+
+## Lancement
+
+```bash
+python main.py
+```
+
+Au démarrage, le programme demande quelle source de signal utiliser :
+- **1** = Simulation (génère des signaux factices)
+- **2** = Fichier texte (lit scan_results.txt)
+- **3** = GNU Radio via TCP (connection réelle au SDR)
+
+Si tu choisis TCP, il faudra entrer l'IP et le port du serveur GNU Radio.
+
+## Ce qui est détecté
+
+Le système cherche ces caractéristiques pour identifier un drone :
+- Bande passante entre 1 et 25 MHz
+- Signal assez fort (RSSI > -85 dBm)
+- Émission continue et stable
+- Structure spectrale type OFDM
+
+Quand un drone est détecté, le système calcule :
+- Distance relative (en km)
+- Zone : proche (<1.5 km), moyenne (1.5-4 km), loin (>4 km)
+- Tendance (rapprochement ou éloignement)
+
+## Dépendances
+
+- `numpy` : calculs sur les signaux
+- `scipy` : traitement du signal
+- `psycopg2` : connexion PostgreSQL
+
+## Notes
+
+- Le programme tourne en continu jusqu'à ce qu'on l'arrête (Ctrl+C)
+- Chaque détection est horodatée et stockée avec toutes ses caractéristiques
+- La localisation est estimative car on utilise qu'un seul capteur (pas de triangulation)
+- En mode simulation, les signaux sont générés aléatoirement pour tester le système
+
+## Base de données
+
+Les détections sont stockées dans la table `detections` avec :
+- timestamp, centre de fréquence, RSSI
+- caractéristiques du signal (bande, durée, variance...)
+- estimation de distance et zone
+- score de confiance de la détection
+
 
 ## Application Web
 
