@@ -142,10 +142,6 @@ Pour sortir du mode simulation (activé par défaut) :
 
 ## Application Web
 
-# Drone Secure
-
-Système de détection et surveillance de drones avec interface React et backend Flask/PostgreSQL.
-
 ## Lancement avec Docker
 
 ### Prérequis
