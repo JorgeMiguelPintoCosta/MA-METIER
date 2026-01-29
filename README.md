@@ -142,7 +142,7 @@ Pour sortir du mode simulation (activé par défaut) :
 
 ## Application Web
 
-## Lancement avec Docker
+### Lancement avec Docker
 
 ### Prérequis
 - Docker Desktop installé et en cours d'exécution
